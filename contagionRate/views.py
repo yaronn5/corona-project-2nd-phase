@@ -112,7 +112,7 @@ def index(request):
     future_sick= current_sick
     for i in range(0,10):
         future_sick = float(future_sick) * current_sickRate
-    plt.title('Contagion 3-day-Rate: ' + str(current_sickRate) + ' - 30 days projection: ' + f'{round(future_sick):,}' + ' sick' )
+    plt.title('Contagion 3-Day-Rate: ' + str(current_sickRate) + ' - 30-days projection: ' + f'{round(future_sick):,}' + ' sick' )
       
     fig = plt.gcf()
 
