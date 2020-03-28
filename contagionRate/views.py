@@ -107,7 +107,12 @@ def index(request):
     plt.ylabel('y - 3 day rate') 
       
     # giving a title to my graph 
-    plt.title('Contagion Rate') 
+    current_sickRate = round(sickRate[len(sickRate)-1], 2)
+    current_sick = numSickList[len(numSickList)-1]
+    future_sick= current_sick
+    for i in range(0,10):
+        future_sick = float(future_sick) * current_sickRate
+    plt.title('Contagion Rate: ' + str(current_sickRate) + ' - in 30 days, total of: ' + f'{round(future_sick):,}' + ' sick' )
       
     fig = plt.gcf()
 
