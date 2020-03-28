@@ -2,6 +2,7 @@ django
 gunicorn
 django-heroku
 requests
+jinja2
 matplotlib
 numpy
 mpld3
