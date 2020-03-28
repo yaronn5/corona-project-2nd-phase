@@ -1,7 +1,9 @@
 django
 gunicorn
 django-heroku
+bs4
 requests
+re
 jinja2
 matplotlib
 numpy
