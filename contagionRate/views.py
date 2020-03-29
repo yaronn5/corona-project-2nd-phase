@@ -1,4 +1,4 @@
-from django.shortcuts import render
+    from django.shortcuts import render
 from django.http import HttpResponse
 import requests, re
 import matplotlib.pyplot as plt 
@@ -127,5 +127,15 @@ def index(request):
     plugins.connect(fig, tooltip)
 
     #mpld3.show() 
+    
+    htmlText = ''' <html>\n<head> 
+          <meta name="MobileOptimized" content="width">
+          <meta name="HandheldFriendly" content="true">
+          <meta name="viewport" content="width=device-width">
+          <meta name="viewport" content="width=device-width, initial-scale=1">'''
+          
+          
+    htmlText += mpld3.fig_to_html(fig)
+    htmlText += '</head>'
 
-    return HttpResponse(mpld3.fig_to_html(fig))
+    return HttpResponse(htmlText)
