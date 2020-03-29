@@ -87,7 +87,7 @@ def index(request):
 
     # plotting the points  
     graph = plt.plot(x, y, color='green', linestyle='dashed', linewidth = 3, 
-             marker='o', markerfacecolor='blue', markersize=16) 
+             marker='o', markerfacecolor='blue', markersize=20) 
       
 
     # setting x and y axis range 
