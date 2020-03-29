@@ -73,7 +73,7 @@ def index(request):
     for i in range(START_RANGE, len(numSickList)-DAY_RATE):
         sickRate.append( int(numSickList[i+DAY_RATE]) / int(numSickList[i]))
         #print(datesList[i+DAY_RATE] + " : " + numSickList[i+DAY_RATE] + "/" + numSickList[i] + "= " + str(sickRate[i-4]))
-        labels.append("<table><tr><td>" + numSickList[i+DAY_RATE] + " / " + numSickList[i] + " = " + str(round(sickRate[i-4],2)) + "</td></tr></table>")
+        labels.append("<table><tr><td>" + numSickList[i+DAY_RATE] + "</td></tr><tr><td>" + numSickList[i] + "</td></tr><tr><td><b>" + str(round(sickRate[i-4],2)) + "</b></td></tr></table>")
         i=i+1
 
     # x axis values
@@ -102,7 +102,7 @@ def index(request):
     ax.set_xticks(x)
       
     # naming the x axis 
-    plt.xlabel('x - Date') 
+    plt.xlabel('x - Date')  
     # naming the y axis 
     plt.ylabel('y - 3 day rate') 
       
