@@ -123,7 +123,7 @@ def index(request):
     # function to show the plot 
     #print(mpld3.fig_to_html(fig))
     tooltip = plugins.PointHTMLTooltip(graph[0], labels,
-                                       voffset=10, hoffset=40, css=css)
+                                       voffset=-80, hoffset=30, css=css)
     plugins.connect(fig, tooltip)
 
     #mpld3.show() 
