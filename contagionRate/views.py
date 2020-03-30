@@ -109,11 +109,9 @@ def index(request):
     # giving a title to my graph 
     current_sickRate = round(sickRate[len(sickRate)-1], 2)
     current_sick = numSickList[len(numSickList)-1]
-    future_sick= current_sick
-    for i in range(0,10):
-        future_sick = float(future_sick) * current_sickRate
+    future_sick = float(current_sick) * math.pow(current_sickRate, 10)
     plt.title('Contagion 3-Day-Rate: ' + str(current_sickRate) + ' - 30-days projection: ' + f'{round(future_sick):,}' + ' sick' )
-      
+         
     fig = plt.gcf()
 
     fig.set_size_inches(18.5, 7.5) 
