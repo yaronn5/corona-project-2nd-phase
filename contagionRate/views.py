@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-import requests, re
+import requests, re, math
 import matplotlib.pyplot as plt 
 import numpy as np; np.random.seed(1)
 import matplotlib.pyplot as plt, mpld3
