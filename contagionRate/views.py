@@ -136,6 +136,6 @@ def index(request):
     htmlText += mpld3.fig_to_html(fig)
     htmlText += '</head>'
 
-    return HttpResponse(numSickList)
-    #return HttpResponse(htmlText)
+    #return HttpResponse(numSickList)
+    return HttpResponse(htmlText)
     
