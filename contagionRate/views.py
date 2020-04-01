@@ -54,7 +54,7 @@ def index(request):
     script = soup.findAll('script')[0].string
 
 
-    plt.rcParams.update({'font.size': 22})
+    plt.rcParams.update({'font.size': 16})
     DAY_RATE=3
     START_RANGE=4
     varList = script.replace("\r\n", "").replace(";","").replace(" ", "").split("var")
