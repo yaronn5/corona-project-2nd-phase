@@ -110,7 +110,31 @@ def index(request):
     current_sickRate = round(sickRate[len(sickRate)-1], 2)
     current_sick = numSickList[len(numSickList)-1]
     future_sick = float(current_sick) * math.pow(current_sickRate, 10)
-    plt.title('Contagion 3-Day-Rate: ' + str(current_sickRate) + ' - 30-days projection: ' + f'{round(future_sick):,}' + ' sick' )
+    
+    
+    last = len(numSickList)-1
+    factor_two = int(current_sick)/2
+    past_sick = numSickList[last-1]
+    i = 0
+    j = last-1
+    while int(past_sick) > int(factor_two):
+      #print('past:'+past_sick)
+      i+=1 
+      j-=1
+      past_sick = numSickList[j]
+
+    p = last-i
+    days_to_multiple = i
+    mod = int(factor_two) - int(past_sick)
+    #print('mod: ' + str(mod))
+
+    avg = (float(current_sick)- float(numSickList[p]))/float(i)
+    #print('avg : ' + str(avg))
+    factor_mod = mod/avg
+    #print('factor_mod : ' + str(factor_mod))
+
+    total_mult_days = float(days_to_multiple) + round(factor_mod, 2)
+    ax.set_title('Contagion Rate: ' + str(current_sickRate) + ' - in 30 days, total of: ' + f'{round(future_sick):,}' + ' sick. Number of sick multiplies every ' + str(total_mult_days) + ' days')
          
     fig = plt.gcf()
 
