@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np; np.random.seed(1)
 import matplotlib.pyplot as plt, mpld3
 from mpld3 import plugins
+from datetime import datetime, timedelta
 
 # Create your views here.
 
@@ -43,37 +44,62 @@ def index(request):
     from bs4 import BeautifulSoup
 
     ...
-    url = "http://corona.mako.co.il"
+    from bs4 import BeautifulSoup
+
+
+    url = "https://he.wikipedia.org/wiki/%D7%94%D7%AA%D7%A4%D7%A8%D7%A6%D7%95%D7%AA_%D7%A0%D7%92%D7%99%D7%A3_%D7%94%D7%A7%D7%95%D7%A8%D7%95%D7%A0%D7%94_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C"
     req = requests.get(url, headers)
     soup = BeautifulSoup(req.content, 'html.parser')
     #print(soup)
+    tag = soup.find("table")
+    table = soup.findAll("table")[2]
+    data = []
+    table_body = table.find('tbody')
 
-    tag = soup.find("script")
-    #print(tag)
+    rows = table_body.find_all('tr')
+    for row in rows:
+        cols = row.find_all('td')
+        cols = [ele.text.strip() for ele in cols]
+        data.append([ele for ele in cols if ele]) # Get rid of empty values
 
-    script = soup.findAll('script')[0].string
+    print(data)
 
+    datesList = []
+    numSickList = []
+
+    for item in data:
+        #print(item)
+        print('\n')
+        if len(item) == 3:
+            fullDate = item[0]
+            date = fullDate
+            date = re.sub(r'\d+-(\d+)-(\d+)', r'\2-\1', date, 0)
+            print(date)
+            numSick = item[2]
+            numSick = re.sub(r'([\d,]+).*', r'\1', numSick, 0).replace(',', '')
+            print(numSick)
+            real_date = datetime.strptime(fullDate, "%Y-%m-%d")
+            start_day = datetime.today() - timedelta(days=30)
+            print("start_day " + str(start_day))
+            if real_date >= start_day:
+                print(real_date)
+                datesList.append(date)
+                numSickList.append(numSick)
+
+
+    print(datesList)
+    print(numSickList)
 
     plt.rcParams.update({'font.size': 16})
     DAY_RATE=3
-    START_RANGE=4
-    varList = script.replace("\r\n", "").replace(";","").replace(" ", "").split("var")
-    allValues = " "
-    allValues = allValues.join(varList)
-    #print(numSick)
-    numSick = re.sub(r'.*_globalGraphValues=\[(.*?)\].*', r'\1', allValues, 0)
-    dates = re.sub(r'.*_globalGraphKeys=\[(.*?)\].*', r'\1', allValues, 0).replace('"', '').replace('.20','')
-    numSickList = numSick.split(',')
-    datesList = dates.split(',')
-    #print(numSickList)
-    #print(datesList)
-
+    START_RANGE=0
+    
     sickRate=[]
     labels=[]
     for i in range(START_RANGE, len(numSickList)-DAY_RATE):
         sickRate.append( int(numSickList[i+DAY_RATE]) / int(numSickList[i]))
         #print(datesList[i+DAY_RATE] + " : " + numSickList[i+DAY_RATE] + "/" + numSickList[i] + "= " + str(sickRate[i-4]))
-        labels.append("<table><tr><td>" + numSickList[i+DAY_RATE] + "</td></tr><tr><td>" + numSickList[i] + "</td></tr><tr><td><b>" + str(round(sickRate[i-4],2)) + "</b></td></tr></table>")
+        labels.append("<table><tr><td>" + numSickList[i+DAY_RATE] + "</td></tr><tr><td>" + numSickList[i] + "</td></tr><tr><td><b>" + str(round(sickRate[i],2)) + "</b></td></tr></table>")
         i=i+1
 
     # x axis values
