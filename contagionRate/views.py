@@ -195,6 +195,7 @@ def index(request):
   #mpld3.show() 
 
   htmlText = ''' <html>\n<head> 
+        <meta equiv="refresh" content="5">
         <meta name="MobileOptimized" content="width">
         <meta name="HandheldFriendly" content="true">
         <meta name="viewport" content="width=device-width">
