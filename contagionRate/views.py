@@ -9,202 +9,202 @@ from datetime import datetime, timedelta
 
 # Create your views here.
 
+def index(request):
+
+
+  # Define some CSS to control our custom labels
+  css = """
+  table
+  {
+    border-collapse: collapse;
+  }
+  th
+  {
+    color: #ffffff;
+    background-color: #000000;
+  }
+  td
+  {
+    background-color: #FFA500;
+  }
+  table, th, td
+  {
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:20;
+    border: 1px solid black;
+    text-align: right;
+  }
+  """
+
+  # Set headers
+  headers = requests.utils.default_headers()
+  headers.update({ 'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'})
+
+  from bs4 import BeautifulSoup
+
+
+  url = "https://he.wikipedia.org/wiki/%D7%94%D7%AA%D7%A4%D7%A8%D7%A6%D7%95%D7%AA_%D7%A0%D7%92%D7%99%D7%A3_%D7%94%D7%A7%D7%95%D7%A8%D7%95%D7%A0%D7%94_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C"
+  req = requests.get(url, headers)
+  soup = BeautifulSoup(req.content, 'html.parser')
+  #print(soup)
+  tag = soup.find("table")
+  table = soup.findAll("table")[2]
+  data = []
+  table_body = table.find('tbody')
+
+  rows = table_body.find_all('tr')
+  for row in rows:
+      cols = row.find_all('td')
+      cols = [ele.text.strip() for ele in cols]
+      data.append([ele for ele in cols if ele]) # Get rid of empty values
+
+  #print(data)
+
+  url_alt = 'https://www.worldometers.info/coronavirus/country/israel/'
+  req = requests.get(url_alt, headers)
+  soup = BeautifulSoup(req.content, 'html.parser')
+  #print(soup)
+  mydivs = soup.find_all("div", class_="maincounter-number")
+  #print(mydivs)
+  divs = [ele.text.strip() for ele in mydivs]
+  last_stat = divs[0]
+  #print(last_stat)
+
+  last_stat = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat, 0).replace(',', '')
+  #print(last_stat)
+
+
+  realDatesList = []
+  datesList = []
+  numSickList = []
+
+  for item in data:
+      #print(item)
+      #print('\n')
+      if len(item) == 3:
+          fullDate = item[0]
+          date = fullDate
+          date = re.sub(r'\d+-(\d+)-(\d+)', r'\2-\1', date, 0)
+          print(date)
+          numSick = item[2]
+          numSick = re.sub(r'([\d,]+).*', r'\1', numSick, 0).replace(',', '')
+          #print(numSick)
+          real_date = datetime.strptime(fullDate, "%Y-%m-%d")
+          start_day = datetime.today() - timedelta(days=30)
+          #print("start_day " + str(start_day))
+          if real_date >= start_day:
+              #print(real_date)
+              realDatesList.append(real_date)
+              datesList.append(date)
+              numSickList.append(numSick)
+
+  last_stat = 7777
+  if int(numSickList[len(numSickList)-1]) < int(last_stat) and realDatesList[len(realDatesList)-1].strftime("%j") == datetime.now().strftime("%j"):
+    numSickList[len(numSickList)-1] = str(last_stat)
+
+  #print("{} {}".format(last_stat, numSickList[len(numSickList)-1]))
 
 
 
-# Define some CSS to control our custom labels
-css = """
-table
-{
-  border-collapse: collapse;
-}
-th
-{
-  color: #ffffff;
-  background-color: #000000;
-}
-td
-{
-  background-color: #FFA500;
-}
-table, th, td
-{
-  font-family:Arial, Helvetica, sans-serif;
-  font-size:20;
-  border: 1px solid black;
-  text-align: right;
-}
-"""
+  #print(datesList)
+  #print(numSickList)
 
-# Set headers
-headers = requests.utils.default_headers()
-headers.update({ 'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'})
+  plt.rcParams.update({'font.size': 16})
+  DAY_RATE=3
+  START_RANGE=0
 
-from bs4 import BeautifulSoup
+  sickRate=[]
+  labels=[]
+  for i in range(START_RANGE, len(numSickList)-DAY_RATE):
+      sickRate.append( int(numSickList[i+DAY_RATE]) / int(numSickList[i]))
+      #print(datesList[i+DAY_RATE] + " : " + numSickList[i+DAY_RATE] + "/" + numSickList[i] + "= " + str(sickRate[i-4]))
+      labels.append("<table><tr><td>" + numSickList[i+DAY_RATE] + "</td></tr><tr><td>" + numSickList[i] + "</td></tr><tr><td><b>" + str(round(sickRate[i],2)) + "</b></td></tr></table>")
+      i=i+1
+
+  # x axis values
+  x = datesList[START_RANGE+DAY_RATE:len(datesList)]
+  # corresponding y axis values 
+
+  y = sickRate
+  #print(x)
+  #print(y)
 
 
-url = "https://he.wikipedia.org/wiki/%D7%94%D7%AA%D7%A4%D7%A8%D7%A6%D7%95%D7%AA_%D7%A0%D7%92%D7%99%D7%A3_%D7%94%D7%A7%D7%95%D7%A8%D7%95%D7%A0%D7%94_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C"
-req = requests.get(url, headers)
-soup = BeautifulSoup(req.content, 'html.parser')
-#print(soup)
-tag = soup.find("table")
-table = soup.findAll("table")[2]
-data = []
-table_body = table.find('tbody')
+  # plotting the points  
+  graph = plt.plot(x, y, color='green', linestyle='dashed', linewidth = 3, 
+            marker='o', markerfacecolor='blue', markersize=20) 
+    
 
-rows = table_body.find_all('tr')
-for row in rows:
-    cols = row.find_all('td')
-    cols = [ele.text.strip() for ele in cols]
-    data.append([ele for ele in cols if ele]) # Get rid of empty values
-
-#print(data)
-
-url_alt = 'https://www.worldometers.info/coronavirus/country/israel/'
-req = requests.get(url_alt, headers)
-soup = BeautifulSoup(req.content, 'html.parser')
-#print(soup)
-mydivs = soup.find_all("div", class_="maincounter-number")
-#print(mydivs)
-divs = [ele.text.strip() for ele in mydivs]
-last_stat = divs[0]
-#print(last_stat)
-
-last_stat = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat, 0).replace(',', '')
-#print(last_stat)
+  # setting x and y axis range 
+  plt.ylim(0, 3) 
+  plt.xlim(0,len(datesList)-START_RANGE) 
 
 
-realDatesList = []
-datesList = []
-numSickList = []
+  #fig, ax = plt.subplots()
 
-for item in data:
-    #print(item)
-    #print('\n')
-    if len(item) == 3:
-        fullDate = item[0]
-        date = fullDate
-        date = re.sub(r'\d+-(\d+)-(\d+)', r'\2-\1', date, 0)
-        print(date)
-        numSick = item[2]
-        numSick = re.sub(r'([\d,]+).*', r'\1', numSick, 0).replace(',', '')
-        #print(numSick)
-        real_date = datetime.strptime(fullDate, "%Y-%m-%d")
-        start_day = datetime.today() - timedelta(days=30)
-        #print("start_day " + str(start_day))
-        if real_date >= start_day:
-            #print(real_date)
-            realDatesList.append(real_date)
-            datesList.append(date)
-            numSickList.append(numSick)
+  ax = plt.gca()
+  ax.set_xticklabels(x)
+  ax.set_xticks(x)
+    
+  # naming the x axis 
+  plt.xlabel('x - Date')  
+  # naming the y axis 
+  plt.ylabel('y - 3 day rate') 
+    
+  # giving a title to my graph 
+  current_sickRate = round(sickRate[len(sickRate)-1], 2)
+  current_sick = numSickList[len(numSickList)-1]
+  future_sick = float(current_sick) * math.pow(current_sickRate, 10)
 
-last_stat = 7777
-if int(numSickList[len(numSickList)-1]) < int(last_stat) and realDatesList[len(realDatesList)-1].strftime("%j") == datetime.now().strftime("%j"):
-  numSickList[len(numSickList)-1] = str(last_stat)
 
-#print("{} {}".format(last_stat, numSickList[len(numSickList)-1]))
+  last = len(numSickList)-1
+  factor_two = int(current_sick)/2
+  past_sick = numSickList[last-1]
+  i = 0
+  j = last-1
+  while int(past_sick) > int(factor_two):
+    #print('past:'+past_sick)
+    i+=1 
+    j-=1
+    past_sick = numSickList[j]
+
+  p = last-i
+  days_to_multiple = i
+  mod = int(factor_two) - int(past_sick)
+  #print('mod: ' + str(mod))
+
+  avg = (float(current_sick)- float(numSickList[p]))/float(i)
+  #print('avg : ' + str(avg))
+  factor_mod = mod/avg
+  #print('factor_mod : ' + str(factor_mod))
+
+  total_mult_days = float(days_to_multiple) + round(factor_mod, 2)
+  ax.set_title('3-day Contagion Rate: ' + str(current_sickRate) + '. In 30 days, total of: ' + f'{round(future_sick):,}' + ' sick. Number of sick multiplies every ' + str(total_mult_days) + ' days')
+        
+  fig = plt.gcf()
+
+  fig.set_size_inches(18.5, 7.5) 
 
 
 
-#print(datesList)
-#print(numSickList)
+  # function to show the plot 
+  #print(mpld3.fig_to_html(fig))
+  tooltip = plugins.PointHTMLTooltip(graph[0], labels,
+                                      voffset=-80, hoffset=30, css=css)
+  plugins.connect(fig, tooltip)
 
-plt.rcParams.update({'font.size': 16})
-DAY_RATE=3
-START_RANGE=0
+  #mpld3.show() 
 
-sickRate=[]
-labels=[]
-for i in range(START_RANGE, len(numSickList)-DAY_RATE):
-    sickRate.append( int(numSickList[i+DAY_RATE]) / int(numSickList[i]))
-    #print(datesList[i+DAY_RATE] + " : " + numSickList[i+DAY_RATE] + "/" + numSickList[i] + "= " + str(sickRate[i-4]))
-    labels.append("<table><tr><td>" + numSickList[i+DAY_RATE] + "</td></tr><tr><td>" + numSickList[i] + "</td></tr><tr><td><b>" + str(round(sickRate[i],2)) + "</b></td></tr></table>")
-    i=i+1
-
-# x axis values
-x = datesList[START_RANGE+DAY_RATE:len(datesList)]
-# corresponding y axis values 
-
-y = sickRate
-#print(x)
-#print(y)
-
-
-# plotting the points  
-graph = plt.plot(x, y, color='green', linestyle='dashed', linewidth = 3, 
-          marker='o', markerfacecolor='blue', markersize=20) 
-  
-
-# setting x and y axis range 
-plt.ylim(0, 3) 
-plt.xlim(0,len(datesList)-START_RANGE) 
-
-
-#fig, ax = plt.subplots()
-
-ax = plt.gca()
-ax.set_xticklabels(x)
-ax.set_xticks(x)
-  
-# naming the x axis 
-plt.xlabel('x - Date')  
-# naming the y axis 
-plt.ylabel('y - 3 day rate') 
-  
-# giving a title to my graph 
-current_sickRate = round(sickRate[len(sickRate)-1], 2)
-current_sick = numSickList[len(numSickList)-1]
-future_sick = float(current_sick) * math.pow(current_sickRate, 10)
-
-
-last = len(numSickList)-1
-factor_two = int(current_sick)/2
-past_sick = numSickList[last-1]
-i = 0
-j = last-1
-while int(past_sick) > int(factor_two):
-  #print('past:'+past_sick)
-  i+=1 
-  j-=1
-  past_sick = numSickList[j]
-
-p = last-i
-days_to_multiple = i
-mod = int(factor_two) - int(past_sick)
-#print('mod: ' + str(mod))
-
-avg = (float(current_sick)- float(numSickList[p]))/float(i)
-#print('avg : ' + str(avg))
-factor_mod = mod/avg
-#print('factor_mod : ' + str(factor_mod))
-
-total_mult_days = float(days_to_multiple) + round(factor_mod, 2)
-ax.set_title('3-day Contagion Rate: ' + str(current_sickRate) + '. In 30 days, total of: ' + f'{round(future_sick):,}' + ' sick. Number of sick multiplies every ' + str(total_mult_days) + ' days')
-      
-fig = plt.gcf()
-
-fig.set_size_inches(18.5, 7.5) 
-
-
-
-# function to show the plot 
-#print(mpld3.fig_to_html(fig))
-tooltip = plugins.PointHTMLTooltip(graph[0], labels,
-                                    voffset=-80, hoffset=30, css=css)
-plugins.connect(fig, tooltip)
-
-#mpld3.show() 
-
-htmlText = ''' <html>\n<head> 
-      <meta name="MobileOptimized" content="width">
-      <meta name="HandheldFriendly" content="true">
-      <meta name="viewport" content="width=device-width">
-      <meta name="viewport" content="width=device-width, initial-scale=1">'''
-      
-      
-htmlText += mpld3.fig_to_html(fig)
-htmlText += '</head>'
-
+  htmlText = ''' <html>\n<head> 
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="width=device-width, initial-scale=1">'''
+        
+        
+  htmlText += mpld3.fig_to_html(fig)
+  htmlText += '</head>'
+  print(htmlText)
 #return HttpResponse(numSickList)
-return HttpResponse(htmlText)
+#return HttpResponse(htmlText)
     
