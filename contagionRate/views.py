@@ -98,7 +98,6 @@ def index(request):
               datesList.append(date)
               numSickList.append(numSick)
 
-  last_stat = 7777
   if int(numSickList[len(numSickList)-1]) < int(last_stat) and realDatesList[len(realDatesList)-1].strftime("%j") == datetime.now().strftime("%j"):
     numSickList[len(numSickList)-1] = str(last_stat)
 
