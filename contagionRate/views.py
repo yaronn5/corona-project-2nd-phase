@@ -227,7 +227,7 @@ def index(request):
   #print('factor_mod : ' + str(factor_mod))
 
   total_mult_days = float(days_to_multiple) + round(factor_mod, 2)
-  ax.set_title('3-day Contagion Rate: ' + str(current_sickRate) + '.  In 30 days, total of: ' + f'{round(future_sick):,}' + ' sick. Number of sick multiplies every ' + str(total_mult_days) + ' days')
+  ax.set_title('[ 3-day Contagion Rate: ' + str(current_sickRate) + ']  [ In 30 days, total of: ' + f'{round(future_sick):,}' + ' sick ]  [ Number of sick multiplies every ' + str(total_mult_days) + ' days ]')
         
   fig = plt.gcf()
 
