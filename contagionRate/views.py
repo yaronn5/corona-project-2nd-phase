@@ -6,6 +6,7 @@ import numpy as np; np.random.seed(1)
 import matplotlib.pyplot as plt, mpld3
 from mpld3 import plugins
 from datetime import datetime, timedelta
+from threading import Thread
 
 # Create your views here.
 
@@ -42,49 +43,77 @@ def index(request):
 
   from bs4 import BeautifulSoup
 
+  results = {}
 
-  url = "https://he.wikipedia.org/wiki/%D7%94%D7%AA%D7%A4%D7%A8%D7%A6%D7%95%D7%AA_%D7%A0%D7%92%D7%99%D7%A3_%D7%94%D7%A7%D7%95%D7%A8%D7%95%D7%A0%D7%94_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C"
-  req = requests.get(url, headers)
-  soup = BeautifulSoup(req.content, 'html.parser')
-  #print(soup)
-  tag = soup.find("table")
-  table = soup.findAll("table")[2]
-  data = []
-  table_body = table.find('tbody')
+  def scrape_wikipedia():
+    url = "https://he.wikipedia.org/wiki/%D7%94%D7%AA%D7%A4%D7%A8%D7%A6%D7%95%D7%AA_%D7%A0%D7%92%D7%99%D7%A3_%D7%94%D7%A7%D7%95%D7%A8%D7%95%D7%A0%D7%94_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C"
+    req = requests.get(url, headers)
+    soup = BeautifulSoup(req.content, 'html.parser')
+    #print(soup)
+    table = soup.findAll("table")[2]
+    data = []
+    table_body = table.find('tbody')
 
-  rows = table_body.find_all('tr')
-  for row in rows:
-      cols = row.find_all('td')
-      cols = [ele.text.strip() for ele in cols]
-      data.append([ele for ele in cols if ele]) # Get rid of empty values
+    rows = table_body.find_all('tr')
+    for row in rows:
+        cols = row.find_all('td')
+        cols = [ele.text.strip() for ele in cols]
+        data.append([ele for ele in cols if ele]) # Get rid of empty values
 
-  #print(data)
+    #print(data)
+    results['wikipedia'] = data
 
-  url_alt = 'https://www.worldometers.info/coronavirus/country/israel/'
-  req = requests.get(url_alt, headers)
-  soup = BeautifulSoup(req.content, 'html.parser')
-  #print(soup)
-  mydivs = soup.find_all("div", class_="maincounter-number")
-  #print(mydivs)
-  divs = [ele.text.strip() for ele in mydivs]
-  last_stat = divs[0]
-  #print(last_stat)
 
-  last_stat = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat, 0).replace(',', '')
-  #print(last_stat)
+  def scrape_worldometers():
+    url_alt = 'https://www.worldometers.info/coronavirus/country/israel/'
+    req = requests.get(url_alt, headers)
+    soup = BeautifulSoup(req.content, 'html.parser')
+    #print(soup)
+    mydivs = soup.find_all("div", class_="maincounter-number")
+    #print(mydivs)
+    divs = [ele.text.strip() for ele in mydivs]
+    last_stat = divs[0]
+    #print(last_stat)
 
-  url_alt2 = 'https://corona.mako.co.il'
-  req = requests.get(url_alt2, headers)
-  soup = BeautifulSoup(req.content, 'html.parser')
-  #print(soup)
-  p = soup.find("p", class_="stat-total")
-  last_stat2 = p.text.strip()
-  #print(last_stat)
+    last_stat = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat, 0).replace(',', '')
+    #print(last_stat)
+    results['worldometers'] = last_stat
 
-  last_stat2 = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat2, 0).replace(',', '')
-  #print(last_stat)
 
-  last_stat = max(last_stat, last_stat2)
+  def scrape_mako():
+    url_alt2 = 'https://corona.mako.co.il'
+    req = requests.get(url_alt2, headers)
+    soup = BeautifulSoup(req.content, 'html.parser')
+    #print(soup)
+    p = soup.find("p", class_="stat-total")
+    last_stat2 = p.text.strip()
+    #print(last_stat)
+    last_stat2 = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat2, 0).replace(',', '')
+    #print(last_stat)
+    results['mako'] = last_stat2
+
+
+
+  threads = []
+  process = Thread(target=scrape_wikipedia, args=[])
+  process.start()
+  threads.append(process)
+  process = Thread(target=scrape_worldometers, args=[])
+  process.start()
+  threads.append(process)
+  process = Thread(target=scrape_mako, args=[])
+  process.start()
+  threads.append(process)
+
+  for process in threads:
+    process.join()
+
+  last_stat = max(results['worldometers'], results['mako'])
+  data = results['wikipedia']
+
+
+  #last_stat = last_stat2
+  #last_stat = max(last_stat, last_stat2)
   #print(last_stat)
 
   realDatesList = []
