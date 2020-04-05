@@ -124,8 +124,8 @@ def index(request):
 
 
 
-  print(datesList)
-  print(numSickList)
+  #print(datesList)
+  #print(numSickList)
 
 
   exit(1)
