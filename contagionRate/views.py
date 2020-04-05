@@ -85,7 +85,7 @@ def index(request):
   #print(last_stat)
 
   last_stat = max(last_stat, last_stat2)
-  print(last_stat)
+  #print(last_stat)
 
   realDatesList = []
   datesList = []
@@ -98,7 +98,7 @@ def index(request):
           fullDate = item[0]
           date = fullDate
           date = re.sub(r'\d+-(\d+)-(\d+)', r'\2-\1', date, 0)
-          print(date)
+          #print(date)
           numSick = item[2]
           numSick = re.sub(r'([\d,]+).*', r'\1', numSick, 0).replace(',', '')
           #print(numSick)
@@ -127,8 +127,6 @@ def index(request):
   #print(datesList)
   #print(numSickList)
 
-
-  exit(1)
 
   plt.rcParams.update({'font.size': 16})
   DAY_RATE=3
