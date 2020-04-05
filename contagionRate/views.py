@@ -73,6 +73,20 @@ def index(request):
   last_stat = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat, 0).replace(',', '')
   #print(last_stat)
 
+  url_alt2 = 'https://corona.mako.co.il'
+  req = requests.get(url_alt2, headers)
+  soup = BeautifulSoup(req.content, 'html.parser')
+  #print(soup)
+  p = soup.find("p", class_="stat-total")
+  last_stat2 = p.text.strip()
+  #print(last_stat)
+
+  last_stat2 = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat2, 0).replace(',', '')
+  #print(last_stat)
+
+  last_stat = max(last_stat, last_stat2)
+  print(last_stat)
+  exit(1)
 
   realDatesList = []
   datesList = []
@@ -205,6 +219,8 @@ def index(request):
   htmlText += mpld3.fig_to_html(fig)
   htmlText += '</head>'
   #print(htmlText)
-#return HttpResponse(numSickList)
+  #return HttpResponse(numSickList)
   return HttpResponse(htmlText)
-    
+
+
+#index("aaa")
