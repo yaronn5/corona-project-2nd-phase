@@ -86,7 +86,6 @@ def index(request):
 
   last_stat = max(last_stat, last_stat2)
   print(last_stat)
-  exit(1)
 
   realDatesList = []
   datesList = []
@@ -116,7 +115,7 @@ def index(request):
     if realDatesList[len(realDatesList)-1].strftime("%j") == datetime.now().strftime("%j"):
       numSickList[len(numSickList)-1] = str(last_stat)
     else:
-      today = datetime.strptime(datetime.today(), "%d-%m")
+      today = re.sub(r'\d+-(\d+)-(\d+).*', r'\2-\1', str(datetime.today()), 0)
       datesList.append(today)
       numSickList.append(last_stat)
 
@@ -125,8 +124,11 @@ def index(request):
 
 
 
-  #print(datesList)
-  #print(numSickList)
+  print(datesList)
+  print(numSickList)
+
+
+  exit(1)
 
   plt.rcParams.update({'font.size': 16})
   DAY_RATE=3
