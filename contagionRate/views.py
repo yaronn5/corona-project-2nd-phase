@@ -89,7 +89,7 @@ def index(request):
     last_stat2 = p.text.strip()
     #print(last_stat)
     last_stat2 = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat2, 0).replace(',', '')
-    #print(last_stat)
+    #print(last_stat2)
     results['mako'] = last_stat2
 
 
@@ -108,14 +108,15 @@ def index(request):
   for process in threads:
     process.join()
 
-  last_stat = max(results['worldometers'], results['mako'])
+
+  #print('w'+results['worldometers'])
+  #print(results['mako'])
+  last_stat = str(max(int(results['worldometers']), int(results['mako'])))
+  #print(last_stat)
   data = results['wikipedia']
 
 
-  #last_stat = last_stat2
-  #last_stat = max(last_stat, last_stat2)
-  #print(last_stat)
-
+  
   realDatesList = []
   datesList = []
   numSickList = []
@@ -153,8 +154,8 @@ def index(request):
 
 
 
-  #print(datesList)
-  #print(numSickList)
+  print(datesList)
+  print(numSickList)
 
 
   plt.rcParams.update({'font.size': 16})
@@ -217,11 +218,15 @@ def index(request):
     past_sick = numSickList[j]
 
   p = last-i
+  #print( 'factor_two: ' +  str(factor_two))
+  #print( 'past_sick: ' +  str(past_sick))
+  #print("i: " + str(i))
   days_to_multiple = i
   mod = int(factor_two) - int(past_sick)
   #print('mod: ' + str(mod))
 
   avg = (float(current_sick)- float(numSickList[p]))/float(i)
+  #print('numSickList[p]: ' + numSickList[p])
   #print('avg : ' + str(avg))
   factor_mod = mod/avg
   #print('factor_mod : ' + str(factor_mod))
