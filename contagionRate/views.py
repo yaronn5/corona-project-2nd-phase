@@ -50,7 +50,7 @@ def index(request):
     req = requests.get(url, headers)
     soup = BeautifulSoup(req.content, 'html.parser')
     #print(soup)
-    table = soup.findAll("table")[2]
+    table = soup.findAll("table")[3]
     data = []
     table_body = table.find('tbody')
 
