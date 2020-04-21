@@ -50,7 +50,8 @@ def index(request):
     req = requests.get(url, headers)
     soup = BeautifulSoup(req.content, 'html.parser')
     #print(soup)
-    table = soup.findAll("table")[3]
+    div = soup.findAll("div", {"class": "barbox tleft"})
+    table = div[0].find("table")
     data = []
     table_body = table.find('tbody')
 
