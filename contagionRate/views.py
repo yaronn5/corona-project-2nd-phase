@@ -248,6 +248,7 @@ def index(request):
 
   #mpld3.show() 
 
+
   htmlText = ''' <html>\n<head> 
         <meta equiv="refresh" content="300">
         <meta name="MobileOptimized" content="width">
