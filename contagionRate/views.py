@@ -236,12 +236,15 @@ def index(request):
   #ax.set_title('[ 3-day Contagion Rate: ' + str(current_sickRate) + ']  [ In 30 days, total of: ' + f'{round(future_sick):,}' + ' sick ]  [ Number of sick multiplies every ' + str(total_mult_days) + ' days ]')
   '''
   
+  today_sick = float(current_sick)
+  yesterday_sick = float(numSickList[len(numSickList)-2])
   next_day_sick = float(current_sick)
+  day_by_day_sickRate = today_sick/yesterday_sick
   #print(next_day_sick)
   i = 0
   while next_day_sick < 2.0 * float(current_sick) :
     i += 1
-    next_day_sick = next_day_sick * current_sickRate
+    next_day_sick = next_day_sick * day_by_day_sickRate
     #print(next_day_sick)
 
   total_mult_days = i
