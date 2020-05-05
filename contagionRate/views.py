@@ -186,7 +186,7 @@ def index(request):
     
 
   # setting x and y axis range 
-  plt.ylim(0, 2) 
+  plt.ylim(0, 1.5) 
   plt.xlim(0,len(datesList)-START_RANGE) 
 
 
