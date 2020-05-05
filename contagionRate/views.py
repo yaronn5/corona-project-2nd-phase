@@ -206,7 +206,7 @@ def index(request):
   current_sick = numSickList[len(numSickList)-1]
   future_sick = float(current_sick) * math.pow(current_sickRate, 10)
 
-
+  '''
   last = len(numSickList)-1
   factor_two = int(current_sick)/2
   past_sick = numSickList[last-1]
@@ -234,7 +234,19 @@ def index(request):
 
   total_mult_days = float(days_to_multiple) + round(factor_mod, 2)
   #ax.set_title('[ 3-day Contagion Rate: ' + str(current_sickRate) + ']  [ In 30 days, total of: ' + f'{round(future_sick):,}' + ' sick ]  [ Number of sick multiplies every ' + str(total_mult_days) + ' days ]')
-  ax.set_title('[ 3-day Contagion Rate: ' + str(current_sickRate) + ']  [ In 30 days, total of: ' + f'{round(future_sick):,}' + ' sick ] ')
+  '''
+  
+  next_day_sick = float(current_sick)
+  #print(next_day_sick)
+  i = 0
+  while next_day_sick < 2.0 * float(current_sick) :
+    i += 1
+    next_day_sick = next_day_sick * current_sickRate
+    #print(next_day_sick)
+
+  total_mult_days = i
+
+  ax.set_title('[ 3-day Contagion Rate: ' + str(current_sickRate) + ']  [ In 30 days, total of: ' + f'{round(future_sick):,}' + ' sick ]  [ Number of sick multiplies every ' + str(total_mult_days) + ' days ]')
         
   fig = plt.gcf()
 
