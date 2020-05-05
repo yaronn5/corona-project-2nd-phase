@@ -212,7 +212,7 @@ def index(request):
   past_sick = numSickList[last-1]
   i = 0
   j = last-1
-  while int(past_sick) > int(factor_two):
+  while int(past_sick) > int(factor_two) and j>=0:
     #print('past:'+past_sick)
     i+=1 
     j-=1
