@@ -204,7 +204,7 @@ def index(request):
   # giving a title to my graph 
   current_sickRate = round(sickRate[len(sickRate)-1], 2)
   current_sick = numSickList[len(numSickList)-1]
-  future_sick = float(current_sick) * math.pow(current_sickRate, 10)
+  #future_sick = float(current_sick) * math.pow(current_sickRate, 10)
 
   '''
   last = len(numSickList)-1
@@ -248,6 +248,7 @@ def index(request):
     #print(next_day_sick)
 
   total_mult_days = i
+  future_sick = float(current_sick) * math.pow(day_by_day_sickRate, 30)
 
   ax.set_title('[ 3-day Contagion Rate: ' + str(current_sickRate) + ']  [ In 30 days, total of: ' + f'{round(future_sick):,}' + ' sick ]  [ Number of sick multiplies every ' + str(total_mult_days) + ' days ]')
         
