@@ -168,7 +168,7 @@ def index(request):
   for i in range(START_RANGE, len(numSickList)-DAY_RATE):
       sickRate.append( int(numSickList[i+DAY_RATE]) / int(numSickList[i]))
       #print(datesList[i+DAY_RATE] + " : " + numSickList[i+DAY_RATE] + "/" + numSickList[i] + "= " + str(sickRate[i-4]))
-      labels.append("<table><tr><td>" + numSickList[i+DAY_RATE] + "</td></tr><tr><td>" + numSickList[i] + "</td></tr><tr><td><b>" + str(round(sickRate[i],2)) + "</b></td></tr></table>")
+      labels.append("<table><tr><td>" + numSickList[i+DAY_RATE] + "</td></tr><tr><td>" + numSickList[i] + "</td></tr><tr><td><b>" + str(round(sickRate[i],3)) + "</b></td></tr></table>")
       i=i+1
 
   # x axis values
@@ -202,7 +202,7 @@ def index(request):
   plt.ylabel('y - 3 day rate') 
     
   # giving a title to my graph 
-  current_sickRate = round(sickRate[len(sickRate)-1], 2)
+  current_sickRate = round(sickRate[len(sickRate)-1], 3)
   current_sick = numSickList[len(numSickList)-1]
   #future_sick = float(current_sick) * math.pow(current_sickRate, 10)
 
@@ -250,7 +250,7 @@ def index(request):
   total_mult_days = i
   future_sick = float(current_sick) * math.pow(day_by_day_sickRate, 30)
 
-  ax.set_title('[ Contagion Rate - 3-day: ' + str(current_sickRate) + ' 1-day: ' + str(round(day_by_day_sickRate,2)) + ' ]  [ In 30 days, total of: ' + f'{round(future_sick):,}' + ' (+ ' + str(round(float(future_sick) - float(current_sick))) + ')  sick ]  [ Number of sick multiplies every ' + str(total_mult_days) + ' days ]')
+  ax.set_title('[ Contagion Rate - 3-day: ' + str(current_sickRate) + ' 1-day: ' + str(round(day_by_day_sickRate,3)) + ' ]  [ In 30 days, total of: ' + f'{round(future_sick):,}' + ' (+ ' + str(round(float(future_sick) - float(current_sick))) + ')  sick ]  [ Number of sick multiplies every ' + str(total_mult_days) + ' days ]')
         
   fig = plt.gcf()
 
