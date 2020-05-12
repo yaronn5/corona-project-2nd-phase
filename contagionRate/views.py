@@ -102,9 +102,9 @@ def index(request):
   process = Thread(target=scrape_worldometers, args=[])
   process.start()
   threads.append(process)
-  process = Thread(target=scrape_mako, args=[])
-  process.start()
-  threads.append(process)
+  ##process = Thread(target=scrape_mako, args=[])
+  ##process.start()
+  ##threads.append(process)
 
   for process in threads:
     process.join()
@@ -112,7 +112,8 @@ def index(request):
 
   #print('w'+results['worldometers'])
   #print(results['mako'])
-  last_stat = str(max(int(results['worldometers']), int(results['mako'])))
+  ##last_stat = str(max(int(results['worldometers']), int(results['mako'])))
+  last_stat = results['worldometers']
   #print(last_stat)
   data = results['wikipedia']
 
