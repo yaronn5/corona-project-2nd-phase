@@ -81,19 +81,6 @@ def index(request):
     results['worldometers'] = last_stat
 
 
-  def scrape_mako():
-    url_alt2 = 'https://corona.mako.co.il'
-    req = requests.get(url_alt2, headers)
-    soup = BeautifulSoup(req.content, 'html.parser')
-    #print(soup)
-    p = soup.find("p", class_="stat-total")
-    last_stat2 = p.text.strip()
-    #print(last_stat)
-    last_stat2 = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat2, 0).replace(',', '')
-    #print(last_stat2)
-    results['mako'] = last_stat2
-
-
 
   threads = []
   process = Thread(target=scrape_wikipedia, args=[])
@@ -188,7 +175,7 @@ def index(request):
     
 
   # setting x and y axis range 
-  plt.ylim(0.95, 2.5) 
+  plt.ylim(0.95, 1.1) 
   plt.xlim(0,len(datesList)-START_RANGE) 
 
 
@@ -281,7 +268,7 @@ def index(request):
   htmlText += '</head>'
   #print(htmlText)
   #return HttpResponse(numSickList)
-  return HttpResponse(htmlText)
+  #return HttpResponse(htmlText)
 
 
-#index("aaa")
+index("aaa")
