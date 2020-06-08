@@ -135,8 +135,7 @@ def index(request):
           numSick = re.sub(r'([\d,]+).*', r'\1', numSick, 0).replace(',', '')
           #print(numSick)
           real_date = datetime.strptime(fullDate, "%Y-%m-%d")
-          #start_day = datetime.today() - timedelta(days=30)
-          start_day = datetime.today() - datetime(2020,3,15)
+          start_day = datetime.today() - timedelta(days=30)
           #print("start_day " + str(start_day))
           if real_date >= start_day:
               #print(real_date)
