@@ -45,6 +45,25 @@ def index(request):
 
   results = {}
 
+  def scrape_wikipedia():
+    url = "https://he.wikipedia.org/wiki/%D7%94%D7%AA%D7%A4%D7%A8%D7%A6%D7%95%D7%AA_%D7%A0%D7%92%D7%99%D7%A3_%D7%94%D7%A7%D7%95%D7%A8%D7%95%D7%A0%D7%94_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C"
+    req = requests.get(url, headers)
+    soup = BeautifulSoup(req.content, 'html.parser')
+    #print(soup)
+    div = soup.findAll("div", {"class": "barbox tleft"})
+    table = div[0].find("table")
+    data = []
+    table_body = table.find('tbody')
+
+    rows = table_body.find_all('tr')
+    for row in rows:
+        cols = row.find_all('td')
+        cols = [ele.text.strip() for ele in cols]
+        data.append([ele for ele in cols if ele]) # Get rid of empty values
+
+    #print(data)
+    results['wikipedia'] = data
+
 
   def scrape_worldometers():
     url_alt = 'https://www.worldometers.info/coronavirus/country/israel/'
@@ -62,40 +81,81 @@ def index(request):
     results['worldometers'] = last_stat
 
 
+  def scrape_mako():
+    url_alt2 = 'https://corona.mako.co.il'
+    req = requests.get(url_alt2, headers)
+    soup = BeautifulSoup(req.content, 'html.parser')
+    #print(soup)
+    p = soup.find("p", class_="stat-total")
+    last_stat2 = p.text.strip()
+    #print(last_stat)
+    last_stat2 = re.sub(r'<div>.*>([\d,])<.*</div>', r'\1', last_stat2, 0).replace(',', '')
+    #print(last_stat2)
+    results['mako'] = last_stat2
+
+
+
   threads = []
- 
+  process = Thread(target=scrape_wikipedia, args=[])
+  process.start()
+  threads.append(process)
   process = Thread(target=scrape_worldometers, args=[])
   process.start()
   threads.append(process)
+  ##process = Thread(target=scrape_mako, args=[])
+  ##process.start()
+  ##threads.append(process)
 
   for process in threads:
     process.join()
- 
+
+
+  #print('w'+results['worldometers'])
+  #print(results['mako'])
+  ##last_stat = str(max(int(results['worldometers']), int(results['mako'])))
   last_stat = results['worldometers']
-  
-  
-  today = datetime.today().strftime('%d-%m')
-  fileHandle = open ( './data.txt',"r" )
-  lineList = fileHandle.readlines()
-  fileHandle.close()
-  x = re.search(today+r'\s\d', lineList[-1])
-  if x is None:
-      f = open("./data.txt", "a")
-      f.write(today + " " + last_stat + "\n")
-      f.close()
+  #print(last_stat)
+  data = results['wikipedia']
 
 
+  
   realDatesList = []
   datesList = []
   numSickList = []
 
-  with open("./data.txt") as datafile:
-    for line in datafile:
-      s = line.split()
-      datesList.append(s[0])
-      numSickList.append(s[1])
+  for item in data:
+      #print(item)
+      #print('\n')
+      if len(item) == 3:
+          fullDate = item[0]
+          date = fullDate
+          date = re.sub(r'\d+-(\d+)-(\d+)', r'\2-\1', date, 0)
+          #print(date)
+          numSick = item[2]
+          numSick = re.sub(r'([\d,]+).*', r'\1', numSick, 0).replace(',', '')
+          #print(numSick)
+          real_date = datetime.strptime(fullDate, "%Y-%m-%d")
+          start_day = datetime.today() - timedelta(days=30)
+          #start_day = datetime(2020,3,15)
+          #print("start_day " + str(start_day))
+          if real_date >= start_day:
+              #print(real_date)
+              realDatesList.append(real_date)
+              datesList.append(date)
+              numSickList.append(numSick)
 
-  
+  if int(numSickList[len(numSickList)-1]) < int(last_stat):
+    if realDatesList[len(realDatesList)-1].strftime("%j") == datetime.now().strftime("%j"):
+      numSickList[len(numSickList)-1] = str(last_stat)
+    else:
+      today = re.sub(r'\d+-(\d+)-(\d+).*', r'\2-\1', str(datetime.today()), 0)
+      datesList.append(today)
+      numSickList.append(last_stat)
+
+
+  #print("{} {}".format(last_stat, numSickList[len(numSickList)-1]))
+
+
 
   print(datesList)
   print(numSickList)
