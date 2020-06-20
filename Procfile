@@ -1,1 +1,1 @@
-web: gunicorn contagionRate.wsgi --log-file -
+web: gunicorn contagionRate2.wsgi --log-file -
