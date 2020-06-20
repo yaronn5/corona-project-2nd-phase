@@ -278,7 +278,8 @@ def index(request):
         <meta name="viewport" content="width=device-width">
         <meta name="viewport" content="width=device-width, initial-scale=1">'''
         
-        
+  htmlText += '''<script src="https://mpld3.github.io/js/d3.v3.min.js" async=""></script>'''
+  htmlText += '''<script src="https://mpld3.github.io/js/mpld3.v0.3.js" async=""></script>'''
   htmlText += mpld3.fig_to_html(fig)
   htmlText += '</head><body></body></html>'
   #print(htmlText)
